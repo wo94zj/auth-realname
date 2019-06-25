@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+import com.auth.realname.exception.SystemBusyException;
 import com.auth.realname.resp.BaseDto;
 import com.auth.realname.resp.ResultCode;
 import com.auth.realname.resp.ResultUtil;
@@ -31,6 +32,18 @@ public class BasicExceptionHandler {
     private Logger logger = LoggerFactory.getLogger(BasicExceptionHandler.class);
 
     /**
+     * 系统繁忙
+     */
+    @ExceptionHandler(value = SystemBusyException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.OK)
+    public BaseDto<Serializable> systemBusyException(SystemBusyException ex) {
+    	logger.error("SystemBusyException :{}", ExceptionUtil.asString(ex));
+    	
+    	return ResultUtil.result(ex.getCode(), ex.getMessage());
+	}
+    
+    /**
      * 参数验证失败
      */
     @ExceptionHandler(value = ValidationException.class)
@@ -39,7 +52,7 @@ public class BasicExceptionHandler {
     public BaseDto<Serializable> badRequestException(ValidationException ex) {
         logger.error("ValidationException :{}", ExceptionUtil.asString(ex));
 
-        return ResultUtil.result(ResultCode.BAD_REQUEST, ex.getMessage());
+        return ResultUtil.result(ResultCode.BAD_REQUEST.getCode(), ex.getMessage());
     }
     
     /**
@@ -51,7 +64,7 @@ public class BasicExceptionHandler {
     public BaseDto<Serializable> noHandlerFoundException(Exception  ex) {
         logger.error("noHandlerFoundException :{}", ExceptionUtil.asString(ex));
 
-        return ResultUtil.result(ResultCode.BAD_REQUEST, ex.getMessage());
+        return ResultUtil.result(ResultCode.URL_ERROR.getCode(), ex.getMessage());
     }
 
     /**

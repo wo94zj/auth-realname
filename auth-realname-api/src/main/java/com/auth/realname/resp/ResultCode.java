@@ -3,16 +3,17 @@ package com.auth.realname.resp;
 public enum ResultCode {
 
 	OK(2000, "OK"),
-	FAILED(2001, "OK"),
+	FAILED(2001, "Failed"),
+	BUSY(2002, "Server busy, please try again later.."),
 	
 	BAD_REQUEST(4000, "请求信息校验失败"),
 	METHOD_ERROR(4050, "请求方法不支持"),
 	URL_ERROR(4040, "未找到API"),
 	MEDIA_TYPE_ERROR(4150, "MediaType ERROR"),
 	
-	ERROR(5000, "ERROR"),
-    HANDLE_ERROR(5060, "ERROR");
+	ERROR(5000, "ERROR");
     
+	
 	private Integer code;
 	private String msg;
 	

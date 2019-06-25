@@ -5,7 +5,7 @@
     <artifactId>auth-realname</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <artifactId>auth-realname-alicloud</artifactId>
+  <artifactId>auth-realname-alicloud-cy</artifactId>
   
   <dependencies>
   	<dependency>

@@ -7,7 +7,7 @@
   <modules>
   	<module>auth-realname-service</module>
   	<module>auth-realname-api</module>
-  	<module>auth-realname-alicloud</module>
+  	<module>auth-realname-alicloud-cy</module>
   </modules>
   
   <properties>

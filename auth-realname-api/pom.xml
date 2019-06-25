@@ -145,7 +145,7 @@
 		</dependency>
 		<!-- <dependency>
 			<groupId>com.auth</groupId>
-			<artifactId>auth-realname-alicloud</artifactId>
+			<artifactId>auth-realname-alicloud-cy</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency> -->
 		

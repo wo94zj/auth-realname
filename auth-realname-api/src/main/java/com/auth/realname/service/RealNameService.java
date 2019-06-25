@@ -1,7 +1,6 @@
 package com.auth.realname.service;
 
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,8 +8,11 @@ import org.springframework.stereotype.Service;
 import com.auth.bean.Resident;
 import com.auth.realname.bean.RealName;
 import com.auth.realname.enums.AuthStatusEnums;
+import com.auth.realname.exception.SystemBusyException;
 import com.auth.realname.mapper.RealNameMapper;
 import com.auth.realname.redis.RedisLockService;
+import com.auth.realname.redis.config.RedisConfig;
+import com.auth.realname.util.RandomUtil;
 import com.auth.service.IDcardAuthService;
 import com.auth.util.IDcardUtil;
 import com.auth.util.RegExUtil;
@@ -73,6 +75,9 @@ public class RealNameService {
 		return false;
 	}
 
+	/**
+	 * idcard重复的串行处理（避免重复请求，导致多扣费）
+	 */
 	public boolean checkIDcardAndNameWithLock(RealName realname) {
 		Objects.requireNonNull(realname, "RealName must not be null");
 		Objects.requireNonNull(realname.getIdcard(), "idcard must not be null");
@@ -103,7 +108,8 @@ public class RealNameService {
 			}
 		}
 
-		if (redisLockService.lock(realname.getIdcard(), 30, TimeUnit.SECONDS)) {
+		String randomValue = RandomUtil.randomUINT4();
+		if (redisLockService.lock(realname.getIdcard(), randomValue, RedisConfig.LOCK_TIMEOUT_SECONDS)) {
 			realname.setStatus(AuthStatusEnums.UNPASS.getStatus());
 			Resident resident = idcardAuthService.realnameAuth(realname.getIdcard(), realname.getName());
 			if (Objects.nonNull(resident)) {
@@ -113,30 +119,23 @@ public class RealNameService {
 				realname.setArea(resident.getArea());
 				realnameMapper.updateRealNameByIDcard(realname);
 
-				redisLockService.unlock(realname.getIdcard());
+				redisLockService.unLock(realname.getIdcard(), randomValue);
 				return true;
 			}
 
 			realnameMapper.updateStatusByIDcard(realname);
 		} else {
 			// 如果需要争用锁，说明这个idcard程序已经在处理；所以在获取锁之后立马释放锁并进行是否已经获取到认证信息校验
-			int count = 0;
-			boolean lock = false;
-			while (!(lock = redisLockService.tryLock(realname.getIdcard(), 30, TimeUnit.SECONDS, 5))) {
-				count++;
-				if (count > 6) {
-					break;
-				}
-			}
+			boolean lock = redisLockService.tryLock(realname.getIdcard(), randomValue, RedisConfig.LOCK_TIMEOUT_SECONDS, RedisConfig.TRY_LOCK_WAIT_SECONDS);
 			if (lock) {
-				redisLockService.unlock(realname.getIdcard());
+				redisLockService.unLock(realname.getIdcard(), randomValue);
 				return checkIDcardAndName(realname);
 			}
 
-			throw new RuntimeException("can get lock to auth realname");
+			throw new SystemBusyException("can get lock to auth realname");
 		}
 
-		redisLockService.unlock(realname.getIdcard());
+		redisLockService.unLock(realname.getIdcard(), randomValue);
 		return false;
 	}
 }
