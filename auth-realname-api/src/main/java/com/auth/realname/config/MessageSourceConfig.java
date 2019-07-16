@@ -13,7 +13,8 @@ public class MessageSourceConfig {
 	public ResourceBundleMessageSource messageSource() {
 		ResourceBundleMessageSource rbms = new ResourceBundleMessageSource();
 		rbms.setDefaultEncoding("UTF-8");
-		rbms.setBasename("i18n/messages");
+		//支持加载多个文件
+		rbms.setBasenames("i18n/common");
 		return rbms;
 	}
 	

@@ -54,6 +54,8 @@ public class RegistryConfigurerAdapter implements WebMvcConfigurer {
 		
 		Map<Class<?>, SerializeFilter> classSerializeFilters = new HashMap<>();
 		classSerializeFilters.put(BaseDto.class, new BaseDtoSerilaizer(messageSource));
+		config.setClassSerializeFilters(classSerializeFilters);
+		
 		return new HttpMessageConverters(fastJsonHttpMessageConverter);
 	}
 	

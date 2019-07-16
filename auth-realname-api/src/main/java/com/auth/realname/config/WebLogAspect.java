@@ -16,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -55,10 +54,11 @@ public class WebLogAspect {
 							Arrays.toString(joinPoint.getArgs()));
 
 					String collect = result.getAllErrors().stream().map(v1 -> {
-						if (v1 instanceof FieldError) {
-							return ((FieldError) v1).getField().concat(v1.getDefaultMessage());
+						/*if (v1 instanceof FieldError) {
+							return ((FieldError) v1).getField().concat(" ").concat(v1.getDefaultMessage());
 						}
-						return v1.getObjectName().concat(v1.getDefaultMessage());
+						return v1.getObjectName().concat(" ").concat(v1.getDefaultMessage());*/
+						return v1.getDefaultMessage();
 					}).collect(Collectors.joining(", "));
 
 					throw new ValidationException(collect);
