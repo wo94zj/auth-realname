@@ -16,3 +16,14 @@ eureka:
   client:
     service-url:
       defaultZone: http://127.0.0.1:1110/eureka/
+
+spring:
+  cloud:
+    config: #必须放在bootstrap文件中
+      #uri: http://127.0.0.1:8888/ #使用注册中心获取配置服务器地址时不用写
+      name: ${spring.application.name}
+      #profile: dev
+      label: master
+      discovery: 
+        enabled: true #开启Config服务发现支持（通过注册中心获取配置服务地址）
+        serviceId: springcloud-config-server #指定server端的name,也就是server端spring.application.name的值

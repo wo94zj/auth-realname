@@ -3,13 +3,16 @@ package com.auth.realname.redis.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.scripting.support.ResourceScriptSource;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Configuration
-@PropertySource("classpath:redis.properties")
+//通过Spring Cloud Config加载配置，去掉PropertySource注解
+//@PropertySource("classpath:redis.properties")
 @ConfigurationProperties(prefix = "redis")
 public class RedisConfig {
 	
@@ -20,9 +23,11 @@ public class RedisConfig {
 
 	public void setLockTimeoutSeconds(int lockTimeoutSeconds) {
 		LOCK_TIMEOUT_SECONDS = lockTimeoutSeconds;
+		log.info("LOCK_TIMEOUT_SECONDS :{}", LOCK_TIMEOUT_SECONDS);
 	}
 	public void setTryLockWaitSeconds(int tryLockWaitSeconds) {
 		TRY_LOCK_WAIT_SECONDS = tryLockWaitSeconds;
+		log.info("TRY_LOCK_WAIT_SECONDS :{}", TRY_LOCK_WAIT_SECONDS);
 	}
 	
 	@Bean("delKeySameLua")

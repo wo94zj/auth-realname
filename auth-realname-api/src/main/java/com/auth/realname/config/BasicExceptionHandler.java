@@ -101,7 +101,7 @@ public class BasicExceptionHandler {
 		
 		if (Objects.isNull(resp)) {
 			resp = new ResponseEntity<BaseDto<Serializable>>(
-					ResultUtil.result(ResultCode.ERROR.getCode(), ex.getMessage()),
+					ResultUtil.result(ResultCode.SYSTEM_ERROR.getCode(), ex.getMessage()),
 					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
         return resp;
