@@ -27,3 +27,11 @@ spring:
       discovery: 
         enabled: true #开启Config服务发现支持（通过注册中心获取配置服务地址）
         serviceId: springcloud-config-server #指定server端的name,也就是server端spring.application.name的值
+  zipkin:
+    locator:
+      discovery:
+        enabled: true #自动发现
+  sleuth:
+    sampler:
+      percentage: 1.0 #Spring Cloud Sleuth有一个Sampler策略，可以通过这个实现类来控制采样算法。采样器不会阻碍span相关id的产生，但是会对导出以及附加事件标签的相关操作造成影响。 Sleuth默认采样算法的实现是Reservoir sampling，具体的实现类是PercentageBasedSampler，默认的采样比例为: 0.1(即10%)。不过我们可以通过spring.sleuth.sampler.percentage来设置，所设置的值介于0.0到1.0之间，1.0则表示全部采集。
+  
